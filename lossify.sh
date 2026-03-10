@@ -11,8 +11,10 @@ echo "OVERWRITE_MODE: $OVERWRITE_MODE"
 ls -la "$INPUT_DIR"
 ls -la "$OUTPUT_DIR"
 
-if [ "$TARGET_FORMAT" != "opus" ] && [ "$TARGET_FORMAT" != "mp3" ]; then
-    echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Must be 'opus' or 'mp3'."
+# if [ "$TARGET_FORMAT" != "opus" ] && [ "$TARGET_FORMAT" != "mp3" ]; then
+if [ "$TARGET_FORMAT" != "opus" ]; then
+    # echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Must be 'opus' or 'mp3'."
+    echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Currently supported: 'opus'."
     exit 1
 fi
 
