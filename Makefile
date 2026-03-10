@@ -49,3 +49,14 @@ smoke-test-local:
 smoke-test-docker: clean build_tmp
 	@echo "Running docker smoke test..."
 	docker run -it -u $(UID):$(GID) --volume ./test/input:/data/input:ro --volume ./test/output:/data/output $(IMAGE_NAME):tmp
+
+.PHONY: push-tag
+push-tag:
+	if [[ -n $$(git status --porcelain) ]]; then \
+		echo "There are uncommited changes. Please commit or stash them before pushing a tag."; \
+		exit 1; \
+	fi
+	git tag -a v$(APP_VERSION) -m "Release version $(APP_VERSION)"
+	git push origin v$(APP_VERSION)
+	awk -F. -v OFS=. '{$$NF++; print}' APP_VERSION.txt > APP_VERSION.txt.tmp && mv APP_VERSION.txt.tmp APP_VERSION.txt
+	echo "version automatically bumped to $(shell cat APP_VERSION.txt)"
