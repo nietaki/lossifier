@@ -29,6 +29,6 @@ ENV TARGET_FORMAT=opus
 ENV TARGET_BITRATE=192
 ENV EXTRA_OPUS_FLAGS="--no-phase-inv --downmix-stereo"
 ENV OVERWRITE_MODE="if_newer"
-ENV EXTRA_FILE_EXTENSIONS="jpg,jpeg,png,txt,mp3,nfo"
+ENV EXTRA_FILE_EXTENSIONS="jpg,jpeg,png,txt,mp3"
 
 ENTRYPOINT "/app/lossify.sh"

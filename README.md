@@ -72,13 +72,13 @@ $ docker run -it --rm \
 
 For convenience, the script is configured with environment variables. The following variables are available:
 
-| ENV var name | description | possible values | default value |
-|--------------|-------------|-----------------|---------------|
-| `TARGET_FORMAT` | the lossy format you want to convert to | `opus` (`mp3` coming soon) | `opus` |
-| `TARGET_BITRATE` | the target average bitrate of the converted files in kbps | usually between `11` and `320` | `192` |
-| `EXTRA_OPUS_FLAGS` | extra flags to pass to the opus encoder (ignored if `TARGET_FORMAT` is not `opus`) | any valid flags for `opusenc` | `--no-phase-inv --downmix-stereo` |
-| `OVERWRITE_MODE` | how to handle existing files in the output directory.  | `always`, `if_newer`, `never` | `if_newer` |
-| `EXTRA_FILE_EXTENSIONS` | extra file extensions to copy from the input directory to the output directory (comma-separated) | comma-separated file extensions (without the dot) | `jpg,jpeg,png,txt,mp3,nfo` |
+| ENV var name | description | values (**default**) |
+|--------------|-------------|-----------------|
+| `TARGET_FORMAT` | the lossy format you want to convert to | **`opus`**,  (`mp3` coming soon) |
+| `TARGET_BITRATE` | the target average bitrate of the converted files in kbps | usually between `11` and `320`,  **`192`** by default |
+| `EXTRA_OPUS_FLAGS` | extra flags to pass to `opusenc` (ignored if `TARGET_FORMAT` is not `opus`) | defaults to **`--no-phase-inv --downmix-stereo`** |
+| `OVERWRITE_MODE` | how to handle existing files in the output directory.  | `always`, **`if_newer`**, `never` |
+| `EXTRA_FILE_EXTENSIONS` | extra file extensions to copy from the input directory to the output directory (comma-separated) | comma-separated list, like **`jpg,jpeg,png,txt,mp3`** |
 
 
 You can see the supported ENV vars and their default values by inspecting the docker image:
@@ -95,7 +95,7 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
   "TARGET_BITRATE=192",
   "EXTRA_OPUS_FLAGS=--no-phase-inv --downmix-stereo",
   "OVERWRITE_MODE=if_newer",
-  "EXTRA_FILE_EXTENSIONS=jpg,jpeg,png,txt,mp3,nfo"
+  "EXTRA_FILE_EXTENSIONS=jpg,jpeg,png,txt,mp3"
 ]
 ```
 
