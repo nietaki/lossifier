@@ -24,6 +24,8 @@ if [ "$FILE_COUNT" -eq 0 ]; then
     exit 1
 fi
 
+shopt -s lastpipe
+
 FILE_NO=0
 
 find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FLAC_FILE; do
@@ -35,7 +37,7 @@ find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FL
     fi
 
     # Determine the relative path of the FLAC file with respect to the input directory
-    RELATIVE_PATH="${FLAC_FILE#$INPUT_DIR/}"
+    RELATIVE_PATH="${FLAC_FILE#"$INPUT_DIR"/}"
     
     # Determine the output directory and create it if it doesn't exist
     OUTPUT_SUBDIR="$(dirname "$OUTPUT_DIR/$RELATIVE_PATH")"
@@ -51,7 +53,7 @@ find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FL
         continue
     fi
 
-    echo "\nConverting '$FLAC_FILE'"
+    printf "Converting %s\n" "$FLAC_FILE"
     
     # Convert the FLAC file to OPUS format using opusenc
     # opusenc --no-phase-inv --downmix-stereo --bitrate "$TARGET_BITRATE" "$FLAC_FILE" "$OUTPUT_FILE"
@@ -68,9 +70,8 @@ EXTRA_FILE_EXTENSIONS=$(echo "$EXTRA_FILE_EXTENSIONS" | tr -d '[:space:]')
 for EXT in ${EXTRA_FILE_EXTENSIONS//,/ }; do
     # echo "Processing extra file extension: $EXT"
 
-    FILE_NO=0
     find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.$EXT" | while read -r EXTRA_FILE; do
-        RELATIVE_PATH="${EXTRA_FILE#$INPUT_DIR/}"
+        RELATIVE_PATH="${EXTRA_FILE#"$INPUT_DIR"/}"
         OUTPUT_FILE="$OUTPUT_DIR/$RELATIVE_PATH"
         OUTPUT_SUBDIR="$(dirname "$OUTPUT_FILE")"
         mkdir -p "$OUTPUT_SUBDIR"
