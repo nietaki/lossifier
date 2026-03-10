@@ -116,3 +116,20 @@ jobs:
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+
+  update-description:
+    runs-on: ubuntu-24.04
+    needs: merge
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Upload README.md as DockerHub description
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          short-description: ${{ github.event.repository.description }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: nietaki/lossifier
+          readme-filepath: ./README.md
+

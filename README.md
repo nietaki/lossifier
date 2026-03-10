@@ -1,7 +1,6 @@
 # Lossifier - FLAC to Opus/mp3 converter for your music collection
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nietaki/lossifier/main.yml)
-
 [![Docker Image Size](https://img.shields.io/docker/image-size/nietaki/lossifier)](https://hub.docker.com/r/nietaki/lossifier)
 
 ## Overview
@@ -100,10 +99,10 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
 
 - [x] handle opus
 - [x] handle extra files
+- [ ] handle `OVERWRITE_MODE` ( https://stackoverflow.com/questions/14802807/compare-files-date-bash )
 - [ ] handle mp3  ( https://linux.die.net/man/1/lame , https://manpages.debian.org/trixie/flac/metaflac.1.en.html)
   - [ ] handle mp3 cover art
 - [ ] (configurable) playlist creation
-- [ ] handle `OVERWRITE_MODE` ( https://stackoverflow.com/questions/14802807/compare-files-date-bash )
 
 ## TODO - build process
 
@@ -114,5 +113,5 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
 - [x] github image build pipeline (https://docs.docker.com/build/ci/github-actions/multi-platform/ )
 - [x] github test pipeline
 - [x] write dockerhub readme text / usage
-- [ ] pushing dockherhub readme ( https://github.com/peter-evans/dockerhub-description ?)
+- [x] pushing dockherhub readme ( https://github.com/peter-evans/dockerhub-description ?)
 
