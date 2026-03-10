@@ -79,51 +79,41 @@ for EXT in ${EXTRA_FILE_EXTENSIONS//,/ }; do
 done
 
 
-# # now create playlists for all the opus files in the OUTPUT_DIR/Music/Playlists
+function rp() {
+    # compatibility with GNU realpath on MacOS obtained from Homebrew coreutils
+    if command -v grealpath > /dev/null 2>&1; then
+        grealpath "$@"
+    else
+        realpath "$@"
+    fi
+}
 
-# mkdir -p "$OUTPUT_DIR/Playlists"
-# PLAYLIST_DIR="$OUTPUT_DIR/Music/Playlists"
+# both PLAYLISTS_DIR and M3U_DIRS needs to be set in order for the playlist creation to be performed
 
-# # iterate through all the directories in OUTPUT_DIR/Music/Playlists
-# find "$PLAYLIST_DIR" -type d | while read -r DIR; do
-#     PLAYLIST_NAME="$(basename "$DIR").m3u"
-#     PLAYLIST_PATH="$OUTPUT_DIR/Playlists/$PLAYLIST_NAME"
-#     echo "Re-creating playlist '$PLAYLIST_PATH'"
-#     # delete the file if exists and re-create it
-#     rm -f "$PLAYLIST_PATH"
-#     touch "$PLAYLIST_PATH"
-#     # find all opus files in the directory and add them to the playlist
-#     find "$DIR" -type f -name "*.opus" | while read -r OPUS_FILE; do
-#         # strip "$OUTPUT_DIR" from the beginning of the path
-#         OPUS_FILE="${OPUS_FILE#$OUTPUT_DIR/}"
-#         echo "../$OPUS_FILE" >> "$PLAYLIST_PATH"
-#         echo "../$OPUS_FILE"
-#     done
-#     echo "\n"
-# done
+if [ -z "$PLAYLISTS_DIR" ] || [ -z "$M3U_DIRS" ]; then
+    echo "PLAYLISTS_DIR or M3U_DIRS not set, skipping playlist creation."
+else
+    echo ""
+    # build the whole path to the playlists dir
+    PLAYLISTS_DIR="$OUTPUT_DIR/$PLAYLISTS_DIR"
 
-# # do the same, but in the Music directory itself
+    for M3U_DIR in ${M3U_DIRS//,/ }; do
+        M3U_DIR="$OUTPUT_DIR/$M3U_DIR"
+        mkdir -p "$M3U_DIR"
 
+        find "$PLAYLISTS_DIR" -mindepth 1 -type d | while read -r DIR; do
+            PLAYLIST_NAME="$(basename "$DIR").m3u"
+            PLAYLIST_PATH="$M3U_DIR/$PLAYLIST_NAME"
+            echo "(Re-)creating playlist '$PLAYLIST_PATH'"
+            : > "$PLAYLIST_PATH"
 
-# mkdir -p "$OUTPUT_DIR/Music/m3us"
-# PLAYLIST_DIR="$OUTPUT_DIR/Music/Playlists"
-
-# # iterate through all the directories in OUTPUT_DIR/Music/Playlists
-# find "$PLAYLIST_DIR" -type d | while read -r DIR; do
-#     PLAYLIST_NAME="$(basename "$DIR").m3u"
-#     PLAYLIST_PATH="$OUTPUT_DIR/Music/m3us/$PLAYLIST_NAME"
-#     echo "Re-creating playlist '$PLAYLIST_PATH'"
-#     # delete the file if exists and re-create it
-#     rm -f "$PLAYLIST_PATH"
-#     touch "$PLAYLIST_PATH"
-#     # find all opus files in the directory and add them to the playlist
-#     find "$DIR" -type f -name "*.opus" | while read -r OPUS_FILE; do
-#         # strip "$OUTPUT_DIR/Music" from the beginning of the path
-#         OPUS_FILE="${OPUS_FILE#$OUTPUT_DIR/Music/}"
-#         echo "../$OPUS_FILE" >> "$PLAYLIST_PATH"
-#         echo "../$OPUS_FILE"
-#     done
-#     echo "\n"
-# done
+            find "$DIR" -type f -iname "*.mp3" -o -iname "*.opus" | while read -r FILE; do
+                RELATIVE_SONG_PATH=$(rp --relative-to="$M3U_DIR" "$FILE")
+                echo "$RELATIVE_SONG_PATH" >> "$PLAYLIST_PATH"
+            done
+        done
+    done
+fi
+echo ""
 
 echo "we're out"

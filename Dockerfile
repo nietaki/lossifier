@@ -11,7 +11,7 @@ RUN sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list.d/debian.s
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     opus-tools lame flac \
-    shellcheck
+    shellcheck coreutils
 
 WORKDIR /app
 
@@ -30,5 +30,7 @@ ENV TARGET_BITRATE=192
 ENV EXTRA_OPUS_FLAGS="--no-phase-inv --downmix-stereo"
 ENV OVERWRITE_MODE="if_newer"
 ENV EXTRA_FILE_EXTENSIONS="jpg,jpeg,png,txt,mp3"
+ENV PLAYLISTS_DIR=""
+ENV M3U_DIRS=""
 
 ENTRYPOINT "/app/lossify.sh"

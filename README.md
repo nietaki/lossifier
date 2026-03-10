@@ -79,6 +79,8 @@ For convenience, the script is configured with environment variables. The follow
 | `EXTRA_OPUS_FLAGS` | extra flags to pass to `opusenc` (ignored if `TARGET_FORMAT` is not `opus`) | defaults to **`--no-phase-inv --downmix-stereo`** |
 | `OVERWRITE_MODE` | how to handle existing files in the output directory.  | `always`, **`if_newer`**, `never` |
 | `EXTRA_FILE_EXTENSIONS` | extra file extensions to copy from the input directory to the output directory (comma-separated) | comma-separated list, like **`jpg,jpeg,png,txt,mp3`** |
+| `PLAYLISTS_DIR` | directory, in which where each subdirectory represents a playlist. Must be a relative path (WRT the input directory) | "" |
+| `M3U_DIRS` | comma-separated list of (relative) directories that should be filled with `.m3u` playlist files. If the directories don't exist, they will be created. Again, relative paths only  | "" |
 
 
 You can see the supported ENV vars and their default values by inspecting the docker image:
@@ -105,5 +107,4 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
 - [ ] handle `OVERWRITE_MODE` ( https://stackoverflow.com/questions/14802807/compare-files-date-bash )
 - [ ] handle mp3  ( https://linux.die.net/man/1/lame , https://manpages.debian.org/trixie/flac/metaflac.1.en.html)
   - [ ] handle mp3 cover art
-- [ ] (configurable) playlist creation
 

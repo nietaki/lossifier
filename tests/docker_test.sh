@@ -11,8 +11,12 @@ function set_up() {
   OUTPUT_OPUS="test/output/Playlists/Assorted Techno/Interpunkcja (test).opus"
   INPUT_FOLDER_IMAGE="test/input/Playlists/Assorted Techno/folder.jpg"
   OUTPUT_FOLDER_IMAGE="test/output/Playlists/Assorted Techno/folder.jpg"
+  PLAYLIST_ONE="test/output/m3us/Assorted Techno.m3u"
+  PLAYLIST_TWO="test/output/Playlists/Assorted Techno.m3u"
   assert_file_not_exists "$OUTPUT_OPUS"
   assert_file_not_exists "$OUTPUT_FOLDER_IMAGE"
+  assert_file_not_exists "$PLAYLIST_ONE"
+  assert_file_not_exists "$PLAYLIST_TWO"
 }
 
 function get_opus_tag() {
@@ -28,7 +32,7 @@ function get_opus_tag() {
 
 
 function test_example_conversion() {
-  make run
+  make smoke-test-docker
 
   assert_file_exists "$OUTPUT_OPUS"
   assert_file_exists "$OUTPUT_FOLDER_IMAGE"
@@ -45,4 +49,12 @@ function test_example_conversion() {
   assert_same "14" "$(get_opus_tag "$OUTPUT_OPUS" "TRACKNUMBER")"
   assert_same "Jacek Królikowski" "$(get_opus_tag "$OUTPUT_OPUS" "COMPOSER")"
   assert_same "unpublished" "$(get_opus_tag "$OUTPUT_OPUS" "ALBUM")"
+
+  assert_file_exists "$PLAYLIST_ONE"
+  assert_same "1" "$(wc -l < "$PLAYLIST_ONE" | xargs)"
+  assert_same "../Playlists/Assorted Techno/Interpunkcja (test).opus" "$(head -n 1 "$PLAYLIST_ONE")"
+
+  assert_file_exists "$PLAYLIST_TWO"
+  assert_same "1" "$(wc -l < "$PLAYLIST_TWO" | xargs)"
+  assert_same "Assorted Techno/Interpunkcja (test).opus" "$(head -n 1 "$PLAYLIST_TWO")"
 }

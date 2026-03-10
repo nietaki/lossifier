@@ -12,7 +12,7 @@ all: check test
 
 .PHONY: mac-install
 mac-install:
-	brew install shellcheck flac opus-tools lame
+	brew install shellcheck flac opus-tools lame coreutils
 
 .PHONY: debian-install
 debian-install:
@@ -55,12 +55,13 @@ run:
 .PHONY: smoke-test-local
 smoke-test-local:
 	@echo "Running local smoke test..."
-	INPUT_DIR=$(pwd)/test/input OUTPUT_DIR=$(pwd)/test/output TARGET_FORMAT=opus TARGET_BITRATE=192 EXTRA_OPUS_FLAGS="--no-phase-inv --downmix-stereo" OVERWRITE_MODE="if_newer" EXTRA_FILE_EXTENSIONS="jpg, jpeg,png,txt,mp3" bash ./lossify.sh
+	INPUT_DIR=$(pwd)/test/input OUTPUT_DIR=$(pwd)/test/output TARGET_FORMAT=opus TARGET_BITRATE=192 EXTRA_OPUS_FLAGS="--no-phase-inv --downmix-stereo" OVERWRITE_MODE="if_newer" EXTRA_FILE_EXTENSIONS="jpg, jpeg,png,txt,mp3" PLAYLISTS_DIR="Playlists" M3U_DIRS="m3us,Playlists" bash ./lossify.sh
 
 .PHONY: smoke-test-docker
-smoke-test-docker: clean build_tmp
+smoke-test-docker:
 	@echo "Running docker smoke test..."
-	docker run -it -u $(UID):$(GID) --volume ./test/input:/data/input:ro --volume ./test/output:/data/output $(IMAGE_NAME):tmp
+	docker run -u $(UID):$(GID) --volume ./test/input:/data/input:ro --volume ./test/output:/data/output \
+		-e PLAYLISTS_DIR="Playlists" -e M3U_DIRS="m3us,Playlists" $(IMAGE_NAME):tmp
 
 .PHONY: push-tag
 push-tag:
