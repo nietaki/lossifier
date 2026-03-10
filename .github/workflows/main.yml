@@ -1,5 +1,5 @@
 # https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
-name: docker-images
+name: main
 
 on:
   push:
@@ -8,7 +8,18 @@ env:
   REGISTRY_IMAGE: nietaki/lossifier
 
 jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Run Shellcheck
+        uses: ludeeus/action-shellcheck@2.0.0
+
   build:
+    needs: 
+      - test
     strategy:
       fail-fast: false
       matrix:

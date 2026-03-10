@@ -58,5 +58,5 @@ push-tag:
 	fi
 	git tag -a v$(APP_VERSION) -m "Release version $(APP_VERSION)"
 	git push origin v$(APP_VERSION)
-	awk -F. -v OFS=. '{$$NF++; print}' APP_VERSION.txt > APP_VERSION.txt.tmp && mv APP_VERSION.txt.tmp APP_VERSION.txt
-	echo "version automatically bumped to $(shell cat APP_VERSION.txt)"
+	awk -F. -v OFS=. '{$$NF++; print}' APP_VERSION.txt > APP_VERSION.txt.tmp && mv APP_VERSION.txt.tmp APP_VERSION.txt; \
+	echo "Version automatically bumped to: $$(cat APP_VERSION.txt)"
