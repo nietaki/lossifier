@@ -22,11 +22,23 @@ debian-install:
 check:
 	@echo "Running shellcheck..."
 	shellcheck ./*.sh
+	shellcheck ./tests/*.sh
 
 .PHONY: clean
 clean:
 	rm -rf ./test/output/* || true
 	@rm -rf ./test/output/.DS_Store || true # I'm sorry...
+
+lib/bashunit:
+	curl -s https://bashunit.typeddevs.com/install.sh > install.sh
+	chmod +x install.sh
+	./install.sh
+	rm install.sh
+
+.PHONY: test
+test: lib/bashunit check
+	@echo "Running bashunit tests..."
+	./lib/bashunit test tests/
 
 .PHONY: build_tmp
 build_tmp:
@@ -37,8 +49,8 @@ bash:
 	docker run -it --entrypoint "/bin/bash" --volume ./test/input:/data/input:ro --volume ./test/output:/data/output $(IMAGE_NAME):tmp
 
 .PHONY: run
-run: build_tmp
-	docker run -it -u $(UID):$(GID) --volume ./test/input:/data/input:ro --volume ./test/output:/data/output $(IMAGE_NAME):tmp
+run:
+	docker run -u $(UID):$(GID) --volume ./test/input:/data/input:ro --volume ./test/output:/data/output $(IMAGE_NAME):tmp
 
 .PHONY: smoke-test-local
 smoke-test-local:

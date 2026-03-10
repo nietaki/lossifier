@@ -14,8 +14,25 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - uses: awalsh128/cache-apt-pkgs-action@v1.6.0
+        with:
+          packages: opus-tools curl jq flac lame
+          version: some_cache_version
+
       - name: Run Shellcheck
         uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          ignore_paths: >-
+            lib
+
+      - name: "Install bashunit"
+        run: |
+          curl -s https://bashunit.typeddevs.com/install.sh > install.sh
+          chmod +x install.sh
+          ./install.sh
+
+      - name: "bashunit tests"
+        run: "./lib/bashunit test tests/"
 
   build:
     needs: 

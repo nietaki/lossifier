@@ -29,6 +29,10 @@ The script deliberately ignores hidden files and directories. This behaviour has
 
 You can specify extra file extensions to copy from the input directory to the output directory. This is useful for copying cover art, lyrics, playlists files, or music files that couldn't be obtained in FLAC, but should be included in the resulting lossy collection.
 
+### Tested conversion
+
+Mapping metadata tags can be tricky, but if any issues are found, we can add them to the `bashunit` integration tests to enforce correct behaviour
+
 ## Usage
 
 Available on DockerHub: https://hub.docker.com/r/nietaki/lossifier
@@ -97,21 +101,8 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
 
 ## TODO - functionality
 
-- [x] handle opus
-- [x] handle extra files
 - [ ] handle `OVERWRITE_MODE` ( https://stackoverflow.com/questions/14802807/compare-files-date-bash )
 - [ ] handle mp3  ( https://linux.die.net/man/1/lame , https://manpages.debian.org/trixie/flac/metaflac.1.en.html)
   - [ ] handle mp3 cover art
 - [ ] (configurable) playlist creation
-
-## TODO - build process
-
-- [x] shellcheck
-- [x] handle env-var configuration
-- [x] smoke tests
-- [ ] docker-based tests
-- [x] github image build pipeline (https://docs.docker.com/build/ci/github-actions/multi-platform/ )
-- [x] github test pipeline
-- [x] write dockerhub readme text / usage
-- [x] pushing dockherhub readme ( https://github.com/peter-evans/dockerhub-description ?)
 
