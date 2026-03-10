@@ -1,5 +1,6 @@
 # Lossifier - FLAC to Opus/mp3 converter for your music collection
 
+[![GitHub License](https://img.shields.io/github/license/nietaki/lossifier)](https://github.com/nietaki/lossifier)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nietaki/lossifier/main.yml)
 [![Docker Image Size](https://img.shields.io/docker/image-size/nietaki/lossifier)](https://hub.docker.com/r/nietaki/lossifier)
 
