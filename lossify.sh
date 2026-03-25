@@ -7,10 +7,16 @@ set -e
 # print all the env vars
 echo "TARGET_FORMAT: $TARGET_FORMAT"
 echo "TARGET_BITRATE: $TARGET_BITRATE"
+# shellcheck disable=SC2153
 echo "OVERWRITE_MODE: $OVERWRITE_MODE"
 
 if [ "$TARGET_FORMAT" != "opus" ] && [ "$TARGET_FORMAT" != "mp3" ]; then
     echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Must be 'opus' or 'mp3'."
+    exit 1
+fi
+
+if [ "$OVERWRITE_MODE" != "always" ] && [ "$OVERWRITE_MODE" != "if_newer" ] && [ "$OVERWRITE_MODE" != "never" ]; then
+    echo "Invalid OVERWRITE_MODE: $OVERWRITE_MODE. Must be 'always', 'if_newer', or 'never'."
     exit 1
 fi
 
@@ -43,11 +49,13 @@ find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FL
     # Determine the output file name by replacing .flac with .<target_format>
     OUTPUT_FILE="$OUTPUT_SUBDIR/$(basename "${RELATIVE_PATH%.flac}.$TARGET_FORMAT")"
 
-    # https://stackoverflow.com/questions/14802807/compare-files-date-bash
-    # check if the file already exists
-    if [ -f "$OUTPUT_FILE" ]; then
-        # echo "Skipping '$FLAC_FILE' as '$OUTPUT_FILE' already exists."
+    ACTION=$(should_process "$OVERWRITE_MODE" "$FLAC_FILE" "$OUTPUT_FILE")
+    if [ "$ACTION" == "skip" ]; then
         continue
+    fi
+
+    if [ "$ACTION" == "overwrite" ]; then
+        rm -f "$OUTPUT_FILE"
     fi
 
     printf "Converting %s\n" "$FLAC_FILE"
@@ -69,6 +77,16 @@ for EXT in ${EXTRA_FILE_EXTENSIONS//,/ }; do
         OUTPUT_FILE="$OUTPUT_DIR/$RELATIVE_PATH"
         OUTPUT_SUBDIR="$(dirname "$OUTPUT_FILE")"
         mkdir -p "$OUTPUT_SUBDIR"
+
+        ACTION=$(should_process "$OVERWRITE_MODE" "$EXTRA_FILE" "$OUTPUT_FILE")
+        if [ "$ACTION" == "skip" ]; then
+            continue
+        fi
+
+        if [ "$ACTION" == "overwrite" ]; then
+            rm -f "$OUTPUT_FILE"
+        fi
+
         echo "Copying extra file '$EXTRA_FILE'"
         cp "$EXTRA_FILE" "$OUTPUT_FILE"
     done

@@ -11,6 +11,45 @@ function rp() {
     fi
 }
 
+function should_process() {
+  local overwrite_mode="$1"
+  local source_path="$2"
+  local target_path="$3"
+
+  if [ ! -e "$source_path" ]; then
+    echo "Error: Source file does not exist: $source_path" >&2
+    return 1
+  fi
+
+  if [ "$overwrite_mode" != "always" ] && [ "$overwrite_mode" != "never" ] && [ "$overwrite_mode" != "if_newer" ]; then
+    echo "Error: Invalid overwrite_mode: $overwrite_mode" >&2
+    return 1
+  fi
+
+  if [ ! -e "$target_path" ]; then
+    echo "create"
+    return 0
+  fi
+
+  case "$overwrite_mode" in
+    always)
+      echo "overwrite"
+      ;;
+    never)
+      echo "skip"
+      ;;
+    if_newer)
+      local result
+      result=$(compare_age "$source_path" "$target_path")
+      if [ "$result" == "newer" ]; then
+        echo "overwrite"
+      else
+        echo "skip"
+      fi
+      ;;
+  esac
+}
+
 function compare_age() {
   local left_file="$1"
   local right_file="$2"

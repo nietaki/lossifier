@@ -148,6 +148,10 @@ Available bashunit assertions (from tests/docker_test.sh:16:):
 - `assert_file_not_exists "$path"`
 - `assert_files_equals "$file1" "$file2"`
 
+#### Testing lossify.sh
+
+Only the docker tests (`tests/docker_test.sh`) execute the main `lossify.sh` script. When modifying `lossify.sh`, always run `make test` to ensure docker tests pass, not just `./lib/bashunit test tests/functions_test.sh`.
+
 ### Comments
 
 - Use comments sparingly - code should be self-documenting
@@ -217,6 +221,10 @@ GitHub Actions workflow (.github/workflows/main.yml:1:) runs on every push:
 2. Bashunit tests
 3. Multi-platform Docker build (amd64, arm64)
 4. Docker Hub deployment (on master branch)
+
+## Commit Messages
+
+Use single-line commit messages (max 83 characters) that summarize changes concisely.
 
 ## Common Tasks
 

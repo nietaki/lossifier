@@ -22,6 +22,75 @@ function test_compare_age_different() {
   assert_same "newer" "$verdict"
 }
 
+function test_should_process_always_returns_create_for_missing_target() {
+  local result
+  result=$(should_process "always" "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/nonexistent.jpg")
+  assert_same "create" "$result"
+}
+
+function test_should_process_always_returns_overwrite_for_existing_target() {
+  touch test/tmp/existing.jpg
+  local result
+  result=$(should_process "always" "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/existing.jpg")
+  assert_same "overwrite" "$result"
+}
+
+function test_should_process_never_returns_create_for_missing_target() {
+  local result
+  result=$(should_process "never" "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/nonexistent.jpg")
+  assert_same "create" "$result"
+}
+
+function test_should_process_never_returns_skip_for_existing_target() {
+  touch test/tmp/existing.jpg
+  local result
+  result=$(should_process "never" "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/existing.jpg")
+  assert_same "skip" "$result"
+}
+
+function test_should_process_if_newer_returns_create_for_missing_target() {
+  local result
+  result=$(should_process "if_newer" "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/nonexistent.jpg")
+  assert_same "create" "$result"
+}
+
+function test_should_process_if_newer_returns_overwrite_when_source_newer() {
+  touch test/tmp/older_file.jpg
+  sleep 1
+  touch test/tmp/newer_file.jpg
+  local result
+  result=$(should_process "if_newer" "test/tmp/newer_file.jpg" "test/tmp/older_file.jpg")
+  assert_same "overwrite" "$result"
+}
+
+function test_should_process_if_newer_returns_skip_when_source_older() {
+  touch test/tmp/older_file.jpg
+  sleep 1
+  touch test/tmp/newer_file.jpg
+  local result
+  result=$(should_process "if_newer" "test/tmp/older_file.jpg" "test/tmp/newer_file.jpg")
+  assert_same "skip" "$result"
+}
+
+function test_should_process_if_newer_returns_skip_for_same_age() {
+  touch test/tmp/same_file.jpg
+  local result
+  result=$(should_process "if_newer" "test/tmp/same_file.jpg" "test/tmp/same_file.jpg")
+  assert_same "skip" "$result"
+}
+
+function test_should_process_fails_with_invalid_mode() {
+  local result
+  result=$(should_process "invalid" "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/output.jpg" 2>&1)
+  assert_same "Error: Invalid overwrite_mode: invalid" "$result"
+}
+
+function test_should_process_fails_with_missing_source() {
+  local result
+  result=$(should_process "always" "test/tmp/nonexistent.jpg" "test/tmp/output.jpg" 2>&1)
+  assert_same "Error: Source file does not exist: test/tmp/nonexistent.jpg" "$result"
+}
+
 function test_convert_to_opus() {
   local input_flac="test/input/Playlists/Assorted Techno/Interpunkcja (test).flac"
   local output_opus="test/tmp/test_output.opus"
