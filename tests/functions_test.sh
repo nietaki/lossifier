@@ -7,13 +7,13 @@ function set_up() {
 
 function test_compare_age_same_age() {
   touch test/tmp/single_file
-  verdict=$(compare_age "test/tmp/single_file" "test/tmp/single_file")
+  local verdict=$(compare_age "test/tmp/single_file" "test/tmp/single_file")
   assert_same "same" "$verdict"
 }
 
 function test_compare_age_different() {
   touch test/tmp/new_file
-  verdict=$(compare_age "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/new_file")
+  local verdict=$(compare_age "test/input/Playlists/Assorted Techno/folder.jpg" "test/tmp/new_file")
   assert_same "older" "$verdict"
 
   verdict=$(compare_age "test/tmp/new_file" "test/input/Playlists/Assorted Techno/folder.jpg")

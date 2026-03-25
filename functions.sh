@@ -22,6 +22,8 @@ function compare_age() {
     return 1
   fi
 
+  local left_mod
+  local right_mod
   if [[ $OSTYPE == darwin* ]]; then
     left_mod=$(stat -f %m "$left_file")
     right_mod=$(stat -f %m "$right_file")
@@ -40,7 +42,7 @@ function compare_age() {
 }
 
 function convert_to() {
-  FORMAT="$1"
+  local FORMAT="$1"
   if [ "$FORMAT" == "opus" ]; then
     # the extra flags are deliberately not surrounded by quotes, so that they can be split into multiple flags if needed
     # shellcheck disable=2086
