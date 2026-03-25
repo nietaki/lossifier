@@ -24,6 +24,8 @@ jobs:
         with:
           ignore_paths: >-
             lib
+            tests
+          check_together: 'yes'
 
       - name: "Install bashunit"
         run: |
