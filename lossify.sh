@@ -9,10 +9,8 @@ echo "TARGET_FORMAT: $TARGET_FORMAT"
 echo "TARGET_BITRATE: $TARGET_BITRATE"
 echo "OVERWRITE_MODE: $OVERWRITE_MODE"
 
-# if [ "$TARGET_FORMAT" != "opus" ] && [ "$TARGET_FORMAT" != "mp3" ]; then
-if [ "$TARGET_FORMAT" != "opus" ]; then
-    # echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Must be 'opus' or 'mp3'."
-    echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Currently supported: 'opus'."
+if [ "$TARGET_FORMAT" != "opus" ] && [ "$TARGET_FORMAT" != "mp3" ]; then
+    echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Must be 'opus' or 'mp3'."
     exit 1
 fi
 

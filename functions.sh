@@ -75,6 +75,7 @@ function convert_to_mp3() {
   # shellcheck disable=SC2086,SC2206
   lame_args+=($EXTRA_LAME_FLAGS)
   lame_args+=(--add-id3v2)
+  lame_args+=(--id3v2-utf16)
 
   local title artist album date comment track genre albumartist composer discnum disctotal
 
