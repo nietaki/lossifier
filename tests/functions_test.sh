@@ -2,6 +2,8 @@
 
 source ./tests/helpers.sh
 
+OLDER_TEST_FILE="test/input/Playlists/Assorted Techno/folder.jpg"
+
 function set_up() {
   rm -f "test/tmp/*"
   source "./functions.sh"
@@ -59,20 +61,16 @@ function test_should_process_if_newer_returns_create_for_missing_target() {
 }
 
 function test_should_process_if_newer_returns_overwrite_when_source_newer() {
-  touch test/tmp/older_file.jpg
-  sleep 1
   touch test/tmp/newer_file.jpg
   local result
-  result=$(should_process "if_newer" "test/tmp/newer_file.jpg" "test/tmp/older_file.jpg")
+  result=$(should_process "if_newer" "test/tmp/newer_file.jpg" "$OLDER_TEST_FILE")
   assert_same "overwrite" "$result"
 }
 
 function test_should_process_if_newer_returns_skip_when_source_older() {
-  touch test/tmp/older_file.jpg
-  sleep 1
   touch test/tmp/newer_file.jpg
   local result
-  result=$(should_process "if_newer" "test/tmp/older_file.jpg" "test/tmp/newer_file.jpg")
+  result=$(should_process "if_newer" "$OLDER_TEST_FILE" "test/tmp/newer_file.jpg")
   assert_same "skip" "$result"
 }
 
@@ -140,4 +138,33 @@ function test_convert_to_mp3() {
   assert_same "nietaki" "$(get_mp3_tag "$output_mp3" "album_artist")"
   assert_same "Jacek Królikowski" "$(get_mp3_tag "$output_mp3" "composer")"
   assert_same "1/2" "$(get_mp3_tag "$output_mp3" "disc")"
+
+  local flac_art="test/tmp/flac_art.png"
+  local mp3_art="test/tmp/mp3_art.png"
+  extract_flac_art "$input_flac" "$flac_art"
+  extract_mp3_art "$output_mp3" "$mp3_art"
+  assert_files_equals "$flac_art" "$mp3_art"
+}
+
+function test_a_problematic_file() {
+  local input_flac="test/input/single_tracks/10 Viktor Vaughn - Saliva.flac"
+  if [ ! -f "$input_flac" ]; then
+    bashunit::skip "uncommitted real life file used for debugging" && return
+  fi
+
+  local output_mp3="test/tmp/vv.mp3"
+
+  TARGET_BITRATE="164" convert_to mp3 "$input_flac" "$output_mp3"
+  assert_same "Saliva" "$(get_mp3_tag "$output_mp3" "title")"
+  assert_same "Viktor Vaughn" "$(get_mp3_tag "$output_mp3" "artist")"
+  assert_same "Vaudeville Villain" "$(get_mp3_tag "$output_mp3" "album")"
+  assert_same "2022" "$(get_mp3_tag "$output_mp3" "date")"
+  assert_same "10" "$(get_mp3_tag "$output_mp3" "track")"
+  assert_same "Hip-Hop" "$(get_mp3_tag "$output_mp3" "genre")"
+  assert_same "Viktor Vaughn" "$(get_mp3_tag "$output_mp3" "album_artist")"
+  assert_contains "Daniel Dumile" "$(get_mp3_tag "$output_mp3" "composer")"
+  assert_contains "Ramble Krohn" "$(get_mp3_tag "$output_mp3" "composer")"
+  assert_not_contains "DumileRamble" "$(get_mp3_tag "$output_mp3" "composer")"
+  assert_same "Daniel Dumile;Ramble Krohn" "$(get_mp3_tag "$output_mp3" "composer")"
+  assert_same "1/1" "$(get_mp3_tag "$output_mp3" "disc")"
 }

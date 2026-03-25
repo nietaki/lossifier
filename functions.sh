@@ -94,7 +94,7 @@ function convert_to() {
 function get_flac_tag() {
   local file="$1"
   local tag="$2"
-  metaflac --show-tag="$tag" "$file" 2>/dev/null | sed "s/^$tag=//"
+  metaflac --show-tag="$tag" "$file" 2>/dev/null | sed "s/^$tag=//I" | tr '\n' ';' | sed 's/;$//'
 }
 
 function convert_to_mp3() {
@@ -104,7 +104,7 @@ function convert_to_mp3() {
   local temp_art
   local has_art=false
 
-  temp_art=$(mktemp --suffix=.jpg)
+  temp_art=$(mktemp)
   if metaflac --export-picture-to="$temp_art" "$input_flac" 2>/dev/null; then
     has_art=true
   fi

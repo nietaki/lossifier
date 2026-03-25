@@ -12,17 +12,16 @@ all: check test
 
 .PHONY: mac-install
 mac-install:
-	brew install shellcheck flac opus-tools lame coreutils ffmpeg
+	brew install shellcheck flac opus-tools lame coreutils ffmpeg exiftool
 
 .PHONY: debian-install
 debian-install:
-	apt-get update && apt-get install -y --no-install-recommends opus-tools lame flac ffmpeg
+	apt-get update && apt-get install -y --no-install-recommends opus-tools lame flac ffmpeg libimage-exiftool-perl
 
 .PHONY: check
 check:
 	@echo "Running shellcheck..."
 	shellcheck -x ./*.sh
-	# shellcheck -x ./tests/*.sh
 
 .PHONY: clean
 clean:
@@ -43,7 +42,7 @@ test: lib/bashunit check
 .PHONY: local-test
 local-test: lib/bashunit check
 	@echo "Running bashunit tests..."
-	./lib/bashunit test --exclude-tag docker --no-parallel tests/
+	./lib/bashunit test -R --exclude-tag docker --no-parallel tests/
 
 .PHONY: build_tmp
 build_tmp:
