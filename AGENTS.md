@@ -222,6 +222,8 @@ GitHub Actions workflow (.github/workflows/main.yml:1:) runs on every push:
 3. Multi-platform Docker build (amd64, arm64)
 4. Docker Hub deployment (on master branch)
 
+When modifying test dependencies or workflows in the Makefile, always update the corresponding GitHub Actions CI workflow (.github/workflows/main.yml) to ensure consistency.
+
 ## Git Commits
 
 Don't commit unless explicitly asked to.
