@@ -102,8 +102,3 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
   "EXTRA_FILE_EXTENSIONS=jpg,jpeg,png,txt,mp3"
 ]
 ```
-
-## TODO - functionality
-
-- [ ] handle `OVERWRITE_MODE` ( https://stackoverflow.com/questions/14802807/compare-files-date-bash )
-
