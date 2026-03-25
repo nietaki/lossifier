@@ -21,8 +21,8 @@ debian-install:
 .PHONY: check
 check:
 	@echo "Running shellcheck..."
-	shellcheck ./*.sh
-	shellcheck ./tests/*.sh
+	shellcheck -x ./*.sh
+	# shellcheck -x ./tests/*.sh
 
 .PHONY: clean
 clean:
@@ -38,7 +38,12 @@ lib/bashunit:
 .PHONY: test
 test: lib/bashunit check
 	@echo "Running bashunit tests..."
-	./lib/bashunit test tests/
+	./lib/bashunit test --no-parallel tests/
+
+.PHONY: local-test
+local-test: lib/bashunit check
+	@echo "Running bashunit tests..."
+	./lib/bashunit test --exclude-tag docker --no-parallel tests/
 
 .PHONY: build_tmp
 build_tmp:

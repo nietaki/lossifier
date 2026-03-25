@@ -9,9 +9,9 @@ RUN chmod ugo+rwx /data
 RUN sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list.d/debian.sources
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    opus-tools lame flac \
-    shellcheck coreutils
+  apt-get install -y --no-install-recommends \
+  opus-tools lame flac \
+  shellcheck coreutils
 
 WORKDIR /app
 

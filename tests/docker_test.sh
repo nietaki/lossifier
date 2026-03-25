@@ -31,6 +31,7 @@ function get_opus_tag() {
 }
 
 
+# @tag docker
 function test_example_conversion() {
   make smoke-test-docker
 
