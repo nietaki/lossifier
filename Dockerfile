@@ -11,8 +11,7 @@ RUN sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list.d/debian.s
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   opus-tools lame flac \
-  shellcheck coreutils locales \
-  bash sh && \
+  shellcheck coreutils locales && \
   sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
   locale-gen en_US.UTF-8
 
