@@ -11,7 +11,8 @@ RUN sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list.d/debian.s
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   opus-tools lame flac \
-  shellcheck coreutils locales && \
+  shellcheck coreutils locales \
+  bash sh && \
   sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
   locale-gen en_US.UTF-8
 
@@ -23,7 +24,6 @@ WORKDIR /app
 
 COPY ./*.sh /app
 RUN chmod ugo+x /app/*.sh
-
 
 VOLUME /data/input
 VOLUME /data/output
@@ -40,4 +40,4 @@ ENV EXTRA_FILE_EXTENSIONS="jpg,jpeg,png,txt,mp3"
 ENV PLAYLISTS_DIR=""
 ENV M3U_DIRS=""
 
-ENTRYPOINT "/app/lossify.sh"
+ENTRYPOINT ["/app/lossify.sh"]
