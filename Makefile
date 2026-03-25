@@ -12,11 +12,11 @@ all: check test
 
 .PHONY: mac-install
 mac-install:
-	brew install shellcheck flac opus-tools lame coreutils
+	brew install shellcheck flac opus-tools lame coreutils ffmpeg
 
 .PHONY: debian-install
 debian-install:
-	apt-get update && apt-get install -y --no-install-recommends opus-tools lame flac
+	apt-get update && apt-get install -y --no-install-recommends opus-tools lame flac ffmpeg
 
 .PHONY: check
 check:

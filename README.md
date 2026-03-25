@@ -74,9 +74,10 @@ For convenience, the script is configured with environment variables. The follow
 
 | ENV var name | description | values (**default**) |
 |--------------|-------------|-----------------|
-| `TARGET_FORMAT` | the lossy format you want to convert to | **`opus`**,  (`mp3` coming soon) |
-| `TARGET_BITRATE` | the target average bitrate of the converted files in kbps | usually between `11` and `320`,  **`192`** by default |
+| `TARGET_FORMAT` | the lossy format you want to convert to | **`opus`**, `mp3` |
+| `TARGET_BITRATE` | the target average bitrate of the converted files in kbps | usually between `11` and `320`, **`192`** by default |
 | `EXTRA_OPUS_FLAGS` | extra flags to pass to `opusenc` (ignored if `TARGET_FORMAT` is not `opus`) | defaults to **`--no-phase-inv --downmix-stereo`** |
+| `EXTRA_LAME_FLAGS` | extra flags to pass to `lame` (ignored if `TARGET_FORMAT` is not `mp3`) | defaults to **`-q 1`** |
 | `OVERWRITE_MODE` | how to handle existing files in the output directory.  | `always`, **`if_newer`**, `never` |
 | `EXTRA_FILE_EXTENSIONS` | extra file extensions to copy from the input directory to the output directory (comma-separated) | comma-separated list, like **`jpg,jpeg,png,txt,mp3`** |
 | `PLAYLISTS_DIR` | directory, in which where each subdirectory represents a playlist. Must be a relative path (WRT the input directory) | "" |
@@ -95,16 +96,14 @@ $ docker inspect nietaki/lossifier:latest | jq 'map(.Config.Env)[0]'
   "OUTPUT_DIR=/data/output",
   "TARGET_FORMAT=opus",
   "TARGET_BITRATE=192",
+  "EXTRA_LAME_FLAGS=-q 1",
   "EXTRA_OPUS_FLAGS=--no-phase-inv --downmix-stereo",
   "OVERWRITE_MODE=if_newer",
   "EXTRA_FILE_EXTENSIONS=jpg,jpeg,png,txt,mp3"
 ]
 ```
 
-
 ## TODO - functionality
 
 - [ ] handle `OVERWRITE_MODE` ( https://stackoverflow.com/questions/14802807/compare-files-date-bash )
-- [ ] handle mp3  ( https://linux.die.net/man/1/lame , https://manpages.debian.org/trixie/flac/metaflac.1.en.html)
-  - [ ] handle mp3 cover art
 

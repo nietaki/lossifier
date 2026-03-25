@@ -28,6 +28,7 @@ ENV OUTPUT_DIR=/data/output
 ENV TARGET_FORMAT=opus
 ENV TARGET_BITRATE=192
 ENV EXTRA_OPUS_FLAGS="--no-phase-inv --downmix-stereo"
+ENV EXTRA_LAME_FLAGS="-q 1"
 ENV OVERWRITE_MODE="if_newer"
 ENV EXTRA_FILE_EXTENSIONS="jpg,jpeg,png,txt,mp3"
 ENV PLAYLISTS_DIR=""
