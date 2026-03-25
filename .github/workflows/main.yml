@@ -14,10 +14,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - uses: awalsh128/cache-apt-pkgs-action@v1.6.0
-        with:
-          packages: opus-tools curl jq flac lame ffmpeg
-          version: some_cache_version
+      - name: install required packages (the naive way)
+        run: apt-get install opus-tools curl jq flac lame ffmpeg
+        shell: bash
 
       - name: Run Shellcheck
         uses: ludeeus/action-shellcheck@2.0.0
