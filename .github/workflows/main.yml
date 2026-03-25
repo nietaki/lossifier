@@ -16,7 +16,7 @@ jobs:
 
       - uses: awalsh128/cache-apt-pkgs-action@v1.6.0
         with:
-          packages: opus-tools curl jq flac lame
+          packages: opus-tools curl jq flac lame ffmpeg
           version: some_cache_version
 
       - name: Run Shellcheck
@@ -37,7 +37,7 @@ jobs:
         run: "./lib/bashunit test tests/"
 
   build:
-    needs: 
+    needs:
       - test
     strategy:
       fail-fast: false
