@@ -2,6 +2,8 @@
 
 set -e
 
+. ./functions.sh
+
 # print all the env vars
 echo "TARGET_FORMAT: $TARGET_FORMAT"
 echo "TARGET_BITRATE: $TARGET_BITRATE"
@@ -25,7 +27,6 @@ fi
 shopt -s lastpipe
 
 FILE_NO=0
-
 find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FLAC_FILE; do
     FILE_NO=$((FILE_NO + 1))
     # every 100 files, print progress
@@ -36,11 +37,11 @@ find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FL
 
     # Determine the relative path of the FLAC file with respect to the input directory
     RELATIVE_PATH="${FLAC_FILE#"$INPUT_DIR"/}"
-    
+
     # Determine the output directory and create it if it doesn't exist
     OUTPUT_SUBDIR="$(dirname "$OUTPUT_DIR/$RELATIVE_PATH")"
     mkdir -p "$OUTPUT_SUBDIR"
-    
+
     # Determine the output file name by replacing .flac with .<target_format>
     OUTPUT_FILE="$OUTPUT_SUBDIR/$(basename "${RELATIVE_PATH%.flac}.$TARGET_FORMAT")"
 
@@ -52,11 +53,8 @@ find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FL
     fi
 
     printf "Converting %s\n" "$FLAC_FILE"
-    
-    # Convert the FLAC file to OPUS format using opusenc
-    # opusenc --no-phase-inv --downmix-stereo --bitrate "$TARGET_BITRATE" "$FLAC_FILE" "$OUTPUT_FILE"
 
-    ./convert_to_"$TARGET_FORMAT".sh "$FLAC_FILE" "$OUTPUT_FILE"
+    convert_to "$TARGET_FORMAT" "$FLAC_FILE" "$OUTPUT_FILE"
 done
 
 echo "$FILE_NO files checked for conversion."
@@ -79,14 +77,6 @@ for EXT in ${EXTRA_FILE_EXTENSIONS//,/ }; do
 done
 
 
-function rp() {
-    # compatibility with GNU realpath on MacOS obtained from Homebrew coreutils
-    if command -v grealpath > /dev/null 2>&1; then
-        grealpath "$@"
-    else
-        realpath "$@"
-    fi
-}
 
 # both PLAYLISTS_DIR and M3U_DIRS needs to be set in order for the playlist creation to be performed
 

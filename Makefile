@@ -16,7 +16,7 @@ mac-install:
 
 .PHONY: debian-install
 debian-install:
-	apt-get update && apt-get install -y --no-install-recommends opus-tools lame flac 
+	apt-get update && apt-get install -y --no-install-recommends opus-tools lame flac
 
 .PHONY: check
 check:
@@ -58,7 +58,7 @@ smoke-test-local:
 	INPUT_DIR=$(pwd)/test/input OUTPUT_DIR=$(pwd)/test/output TARGET_FORMAT=opus TARGET_BITRATE=192 EXTRA_OPUS_FLAGS="--no-phase-inv --downmix-stereo" OVERWRITE_MODE="if_newer" EXTRA_FILE_EXTENSIONS="jpg, jpeg,png,txt,mp3" PLAYLISTS_DIR="Playlists" M3U_DIRS="m3us,Playlists" bash ./lossify.sh
 
 .PHONY: smoke-test-docker
-smoke-test-docker:
+smoke-test-docker: build_tmp
 	@echo "Running docker smoke test..."
 	docker run -u $(UID):$(GID) --volume ./test/input:/data/input:ro --volume ./test/output:/data/output \
 		-e PLAYLISTS_DIR="Playlists" -e M3U_DIRS="m3us,Playlists" $(IMAGE_NAME):tmp
