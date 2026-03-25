@@ -224,14 +224,8 @@ GitHub Actions workflow (.github/workflows/main.yml:1:) runs on every push:
 
 1. Create test file in `tests/` ending with `_test.sh`
 2. Define test functions starting with `test_`
-3. Run `make test` to verify
-
-### Adding New Format Support
-
-1. Create `convert_to_<format>.sh` script
-2. Update validation in `lossify.sh`
-3. Update Dockerfile with required tools
-4. Add tests
+3. Run `make local-test` to verify
+4. If end-to-end tests are required, run `make test`, which takes a longer time and runs in-docker operations
 
 ### Adding New Environment Variable
 
