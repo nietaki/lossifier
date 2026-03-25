@@ -153,7 +153,7 @@ function convert_to_mp3() {
     lame_args+=(--ti "$temp_art")
   fi
 
-  flac -d -c "$input_flac" | lame "${lame_args[@]}" - "$output_mp3"
+  flac --silent -d -c "$input_flac" | lame --silent "${lame_args[@]}" - "$output_mp3"
 
   rm -f "$temp_art"
 }

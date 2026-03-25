@@ -222,9 +222,11 @@ GitHub Actions workflow (.github/workflows/main.yml:1:) runs on every push:
 3. Multi-platform Docker build (amd64, arm64)
 4. Docker Hub deployment (on master branch)
 
-## Commit Messages
+## Git Commits
 
-Use single-line commit messages (max 83 characters) that summarize changes concisely.
+Don't commit unless explicitly asked to.
+
+When creating a commit, use single-line commit messages (max 83 characters) that summarize changes concisely.
 
 ## Common Tasks
 
