@@ -26,11 +26,11 @@ jobs:
             tests
           check_together: 'yes'
 
-      - name: "Install bashunit"
-        run: |
-          curl -s https://bashunit.typeddevs.com/install.sh > install.sh
-          chmod +x install.sh
-          ./install.sh
+      # - name: "Install bashunit"
+      #   run: |
+      #     curl -s https://bashunit.typeddevs.com/install.sh > install.sh
+      #     chmod +x install.sh
+      #     ./install.sh
 
       - name: "bashunit tests"
         run: "./lib/bashunit test tests/"
