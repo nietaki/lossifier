@@ -4,11 +4,51 @@ set -e
 
 . ./functions.sh
 
-# print all the env vars
+shutdown_requested=false
+
+echo "script PID: $$"
+
 echo "TARGET_FORMAT: $TARGET_FORMAT"
 echo "TARGET_BITRATE: $TARGET_BITRATE"
 # shellcheck disable=SC2153
 echo "OVERWRITE_MODE: $OVERWRITE_MODE"
+
+shutdown_handler() {
+    echo ""
+    echo ""
+    echo "Shutdown requested"
+    echo ""
+    shutdown_requested=true
+}
+
+exit_handler() {
+    if [ "$shutdown_requested" = true ]; then
+        # check if PLAYLIST_PATH exists and is not empty, if so, remove it
+        # if [ -n "$OUTPUT_FILE" ] && [ -f "$OUTPUT_FILE" ]; then
+        if [ -n "$OUTPUT_FILE" ] && [ -f "$OUTPUT_FILE" ]; then
+            echo "WARNING: Removing (potentially broken) '$OUTPUT_FILE'"
+            rm -f "$OUTPUT_FILE"
+        fi
+
+        if [ -n "$PLAYLIST_PATH" ] && [ -f "$PLAYLIST_PATH" ]; then
+            echo "WARNING: Removing incomplete playlist '$PLAYLIST_PATH'"
+            rm -f "$PLAYLIST_PATH"
+        fi
+
+        echo ""
+        echo "exit handler finished"
+    fi
+}
+
+trap shutdown_handler SIGINT SIGTERM
+trap exit_handler EXIT
+
+exit_if_shutdown_requested() {
+    if [ "$shutdown_requested" = true ]; then
+        echo "shutting down gracefully..."
+        exit 0
+    fi
+}
 
 if [ "$TARGET_FORMAT" != "opus" ] && [ "$TARGET_FORMAT" != "mp3" ]; then
     echo "Invalid TARGET_FORMAT: $TARGET_FORMAT. Must be 'opus' or 'mp3'."
@@ -32,6 +72,9 @@ shopt -s lastpipe
 
 FILE_NO=0
 find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FLAC_FILE; do
+    unset OUTPUT_FILE
+    exit_if_shutdown_requested
+
     FILE_NO=$((FILE_NO + 1))
     # every 100 files, print progress
     if (( FILE_NO % 100 == 0 )); then
@@ -61,7 +104,11 @@ find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.flac" | while read -r FL
     printf "Converting %s\n" "$FLAC_FILE"
 
     convert_to "$TARGET_FORMAT" "$FLAC_FILE" "$OUTPUT_FILE"
+    exit_if_shutdown_requested
 done
+
+unset OUTPUT_FILE
+exit_if_shutdown_requested
 
 echo "$FILE_NO files checked for conversion."
 
@@ -73,6 +120,8 @@ for EXT in ${EXTRA_FILE_EXTENSIONS//,/ }; do
     # echo "Processing extra file extension: $EXT"
 
     find "$INPUT_DIR" -type f -not -path '*/[@.]*' -name "*.$EXT" | while read -r EXTRA_FILE; do
+        unset OUTPUT_FILE
+        exit_if_shutdown_requested
         RELATIVE_PATH="${EXTRA_FILE#"$INPUT_DIR"/}"
         OUTPUT_FILE="$OUTPUT_DIR/$RELATIVE_PATH"
         OUTPUT_SUBDIR="$(dirname "$OUTPUT_FILE")"
@@ -89,10 +138,12 @@ for EXT in ${EXTRA_FILE_EXTENSIONS//,/ }; do
 
         echo "Copying extra file '$EXTRA_FILE'"
         cp "$EXTRA_FILE" "$OUTPUT_FILE"
+        exit_if_shutdown_requested
     done
 done
 
-
+unset OUTPUT_FILE
+exit_if_shutdown_requested
 
 # both PLAYLISTS_DIR and M3U_DIRS needs to be set in order for the playlist creation to be performed
 
@@ -108,15 +159,20 @@ else
         mkdir -p "$M3U_DIR"
 
         find "$PLAYLISTS_DIR" -mindepth 1 -type d | while read -r DIR; do
+            unset PLAYLIST_PATH
+            exit_if_shutdown_requested
+
             PLAYLIST_NAME="$(basename "$DIR").m3u"
             PLAYLIST_PATH="$M3U_DIR/$PLAYLIST_NAME"
             echo "(Re-)creating playlist '$PLAYLIST_PATH'"
             : > "$PLAYLIST_PATH"
 
             find "$DIR" -type f -iname "*.mp3" -o -iname "*.opus" | while read -r FILE; do
+                exit_if_shutdown_requested
                 RELATIVE_SONG_PATH=$(rp --relative-to="$M3U_DIR" "$FILE")
                 echo "$RELATIVE_SONG_PATH" >> "$PLAYLIST_PATH"
             done
+            unset PLAYLIST_PATH
         done
     done
 fi
