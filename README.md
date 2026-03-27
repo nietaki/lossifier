@@ -12,6 +12,14 @@ It's designed to work idempotently, so you can run it on a schedule as you add m
 
 ## Features
 
+### Opus and MP3 support
+
+The (currently) supported target formats are Opus (for best quality / lowest bitrates) and MP3 (for maximum compatibility). The default target format is Opus, but you can change it with an env var.
+
+### Metadata preservation
+
+Some extra effort has been made to maintain the metadata of the original FLAC files in the resulting lossy collection. This includes tags like title, artist, album, track number, album artist, genre, and **cover art**.
+
 ### Maintaining directory structure
 
 You can use an arbitrary directory structure in the input collection and it will be maintained in the result - the main thing that will change is the file sizes and music format.
@@ -37,6 +45,8 @@ Mapping metadata tags can be tricky, but if any issues are found, we can add the
 ## Usage
 
 Available on DockerHub: https://hub.docker.com/r/nietaki/lossifier
+
+The `latest` tag points to the most recent stable release, there's also versioned tags for each release, and `master` for the most recent `master` branch build.
 
 ### Docker CLI
 
